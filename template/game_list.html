@@ -1,0 +1,62 @@
+{% extends 'user_header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="font-weight: bold; color: #333;">Game List</h2>
+
+    <!-- Search Form -->
+    <form method="GET" action="{% url 'search_game' %}" class="mb-4">
+        <div class="input-group" style="max-width: 500px; margin: 0 auto;">
+            <input type="text" name="q" class="form-control" placeholder="Search free or premium " required 
+                   style="border-radius: 20px 0 0 20px; padding: 10px;">
+            <button type="submit" class="btn btn-primary" style="border-radius: 0 20px 20px 0;">Search</button>
+        </div>
+    </form>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        <div class="text-center">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center" style="max-width: 500px; margin: 10px auto;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Game List -->
+    <div class="row justify-content-center">
+        {% for game in games %}
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-4 d-flex justify-content-center">
+            <div class="card shadow-lg" style="width: 100%; max-width: 300px; border-radius: 15px; overflow: hidden; transition: 0.3s;">
+                <img src="{{ game.image.url }}" class="card-img-top" alt="{{ game.name }}" 
+                     style="height: 180px; object-fit: cover;">
+
+                <div class="card-body text-center">
+                    <h5 class="card-title font-weight-bold text-dark">{{ game.name }}</h5>
+                    <p class="card-text text-muted" style="font-size: 14px;">
+                        {{ game.description|truncatewords:15 }}
+                    </p>
+                    <p class="text-secondary" style="font-size: 14px;">
+                        <strong>Category:</strong> {{ game.category }}
+                    </p>
+                    <p class="text-secondary" style="font-size: 14px;">
+                        <strong>Price:</strong> {% if game.price > 0 %} ${{ game.price }} {% else %} Free {% endif %}
+                    </p>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ game.file.url }}" class="btn btn-outline-success btn-sm" download 
+                           style="border-radius: 20px; font-size: 14px;">Download</a>
+                        <a href="{% url 'purchase_game' game.id %}" class="btn btn-success btn-sm" 
+                           style="border-radius: 20px; font-size: 14px;">Purchase</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted" style="font-size: 16px;">No games available.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'staff_header.html' %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4 fw-bold text-primary">🎮 Staff Dashboard</h2>
+
+    <!-- Navigation Buttons -->
+    <div class="d-flex justify-content-center mb-4">
+        <a href="{% url 'add_game' %}" class="btn btn-success shadow me-2"
+           style="border-radius: 30px; padding: 12px 20px; font-weight: 600;">➕ Add Game</a>
+        <a href="{% url 'staff_game_list' %}" class="btn btn-primary shadow me-2"
+           style="border-radius: 30px; padding: 12px 20px; font-weight: 600;">📜 View Games</a>
+    </div>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center fw-bold">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Game Management Table -->
+    <div class="card shadow-lg border-0 p-4 mb-4"
+         style="border-radius: 15px; background: linear-gradient(to right, #ffffff, #f8f9fa);">
+        <h4 class="mb-3 fw-bold text-secondary">🎮 Manage Games</h4>
+        <table class="table table-hover table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Game Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr class="align-middle">
+                    <td class="fw-bold">{{ game.id }}</td>
+                    <td class="fw-bold text-primary">{{ game.name }}</td>
+                    <td><span class="badge bg-info text-dark">{{ game.category }}</span></td>
+                    <td>{% if game.price > 0 %} 
+                            <span class="text-success fw-bold">${{ game.price }}</span> 
+                        {% else %} 
+                            <span class="text-danger fw-bold">Free</span> 
+                        {% endif %}
+                    </td>
+                    <td>
+                        <img src="{{ game.image.url }}" width="50" height="50" class="rounded shadow">
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_game' game.id %}" class="btn btn-warning btn-sm shadow"
+                           style="border-radius: 8px;">✏️ Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-muted">No games available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Purchase Approvals Table -->
+    <div class="card shadow-lg border-0 p-4"
+         style="border-radius: 15px; background: linear-gradient(to right, #ffffff, #f8f9fa);">
+        <h4 class="mb-3 fw-bold text-secondary">💳 Pending Purchase Approvals</h4>
+        {% if purchases %}
+        <table class="table table-hover table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Game</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in purchases %}
+                <tr class="align-middle">
+                    <td class="fw-bold">{{ purchase.id }}</td>
+                    <td class="text-primary fw-bold">{{ purchase.user.username }}</td>
+                    <td>{{ purchase.game.name }}</td>
+                    <td class="text-success fw-bold">${{ purchase.amount }}</td>
+                    <td>
+                        <span class="badge {% if purchase.payment_status == 'Pending' %}bg-warning{% else %}bg-success{% endif %}">
+                            {{ purchase.payment_status }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'approve_purchase' purchase.id %}" class="btn btn-success btn-sm shadow"
+                           style="border-radius: 8px;">✅ Approve</a>
+                        <a href="{% url 'reject_purchase' purchase.id %}" class="btn btn-danger btn-sm shadow"
+                           style="border-radius: 8px;">❌ Reject</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted text-center">No pending purchases.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'staff_header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4 fw-bold text-primary">Manage Purchase Approvals</h2>
+
+    <!-- Display Messages -->
+    {% if messages %}
+        <div class="mt-2">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Pending Purchase Approvals Table -->
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+        <h4 class="mb-3 text-dark fw-semibold"><i class="bi bi-cart-check"></i> Pending Purchases</h4>
+        
+        {% if purchases %}
+        <table class="table table-hover table-bordered text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Game</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase in purchases %}
+                <tr>
+                    <td class="fw-bold text-secondary">{{ purchase.id }}</td>
+                    <td class="fw-semibold">{{ purchase.user.username }}</td>
+                    <td class="fw-semibold text-primary">{{ purchase.game.name }}</td>
+                    <td>
+                        {% if purchase.amount > 0 %} 
+                            <span class="fw-bold text-success">${{ purchase.amount }}</span>
+                        {% else %} 
+                            <span class="fw-bold text-danger">Free</span> 
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if purchase.payment_status == "Pending" %}
+                            <span class="badge bg-warning text-dark px-3 py-2">Pending</span>
+                        {% elif purchase.payment_status == "Approved" %}
+                            <span class="badge bg-success px-3 py-2">Approved</span>
+                        {% elif purchase.payment_status == "Rejected" %}
+                            <span class="badge bg-danger px-3 py-2">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if purchase.payment_status == "Pending" %}
+                            <a href="{% url 'approve_purchase' purchase.id %}" class="btn btn-success btn-sm fw-semibold">
+                                ✅ Approve
+                            </a>
+                            <a href="{% url 'reject_purchase' purchase.id %}" class="btn btn-danger btn-sm fw-semibold">
+                                ❌ Reject
+                            </a>
+                        {% elif purchase.payment_status == "Approved" %}
+                            {% if purchase.amount > 0 %}
+                                <span class="text-primary fw-semibold">Awaiting Payment</span>
+                            {% else %}
+                                <span class="text-success fw-semibold">Ready for Download</span>
+                            {% endif %}
+                        {% elif purchase.payment_status == "Rejected" %}
+                            <span class="text-danger fw-semibold">Purchase Rejected</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted text-center">No pending purchases.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

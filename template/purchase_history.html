@@ -1,0 +1,69 @@
+{% extends 'user_header.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4 fw-bold text-primary">📜 Purchase History</h2>
+
+    {% if purchases %}
+        <div class="card shadow-lg border-0 rounded-4 p-4">
+            <table class="table table-hover table-bordered text-center align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Game</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for purchase in purchases %}
+                    <tr>
+                        <td class="fw-semibold text-primary">{{ purchase.game.name }}</td>
+                        <td>
+                            {% if purchase.amount > 0 %} 
+                                <span class="fw-bold text-success">${{ purchase.amount }}</span>
+                            {% else %} 
+                                <span class="fw-bold text-danger">Free</span> 
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if purchase.payment_status == "Pending" %}
+                                <span class="badge bg-warning text-dark px-3 py-2">Pending</span>
+                            {% elif purchase.payment_status == "Approved" %}
+                                <span class="badge bg-success px-3 py-2">Approved</span>
+                            {% elif purchase.payment_status == "Paid" %}
+                                <span class="badge bg-info px-3 py-2">Paid</span>
+                            {% elif purchase.payment_status == "Rejected" %}
+                                <span class="badge bg-danger px-3 py-2">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if purchase.payment_status == "Approved" %}
+                                {% if purchase.amount > 0 %}
+                                    <a href="{% url 'dummy_payment' purchase.id %}" class="btn btn-primary btn-sm">
+                                        💳 Make Payment
+                                    </a>
+                                {% else %}
+                                    <a href="{{ purchase.game.download_link }}" class="btn btn-success btn-sm" download>
+                                        ⬇️ Download
+                                    </a>
+                                {% endif %}
+                            {% elif purchase.payment_status == "Paid" %}
+                                <a href="{{ purchase.game.download_link }}" class="btn btn-success btn-sm" download>
+                                    ⬇️ Download
+                                </a>
+                            {% elif purchase.payment_status == "Pending" %}
+                                <span class="text-muted">⏳ Waiting for approval...</span>
+                            {% elif purchase.payment_status == "Rejected" %}
+                                <span class="text-danger">❌ Request Rejected</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-muted text-center">No purchases found.</p>
+    {% endif %}
+</div>
+{% endblock %}

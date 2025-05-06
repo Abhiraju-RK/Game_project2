@@ -1,0 +1,60 @@
+{% extends 'staff_header.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg" style="max-width: 600px; margin: auto; border-radius: 15px;">
+        <div class="card-header bg-primary text-white text-center" style="border-radius: 15px 15px 0 0;">
+            <h2>Add New Game</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Game Name</strong></label>
+                    <input type="text" name="name" class="form-control" required placeholder="Enter game name">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Category</strong></label>
+                    <select name="category" class="form-control" required>
+                        <option value="Free">Free</option>
+                        <option value="Premium">Premium</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Price (Only for Premium)</strong></label>
+                    <input type="number" name="price" class="form-control" step="0.01" placeholder="Enter price">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Description</strong></label>
+                    <textarea name="description" class="form-control" rows="4" required placeholder="Enter game description"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Game File (URL)</strong></label>
+                    <input type="url" name="file" class="form-control" required placeholder="Paste game file URL">
+                </div>
+
+                <div class="mb-3 text-center">
+                    <label class="form-label"><strong>Game Image</strong></label>
+                    <input type="file" name="image" class="form-control" required onchange="previewImage(event)">
+                    <img id="preview" src="#" class="img-thumbnail mt-2 d-none" width="150">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" style="border-radius: 10px; font-size: 16px;">Add Game</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        const preview = document.getElementById('preview');
+        preview.src = URL.createObjectURL(event.target.files[0]);
+        preview.classList.remove('d-none');
+        preview.onload = () => URL.revokeObjectURL(preview.src); // Free memory
+    }
+</script>
+{% endblock %}

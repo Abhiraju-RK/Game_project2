@@ -1,0 +1,103 @@
+{% extends 'user_header.html' %}
+{% block content %}
+{% load static %}
+<br>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+
+<body>
+
+    <div style="max-width: 600px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <h2 style="text-align: center; color: #333;">User Profile</h2>
+
+        <!-- Display Messages -->
+        {% if messages %}
+        {% for message in messages %}
+            <p class="{% if message.tags == 'error' %}error{% else %}success{% endif %}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+        <!-- Profile Update Form -->
+        <form method="POST">
+            {% csrf_token %}
+            <h4 style="text-align: center;">Update Profile</h4>
+            <input type="hidden" name="user_profile" value="1">
+            
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold;">Username</label>
+                <input type="text" name="username" value="{{ user.username }}" required 
+                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold;">First Name</label>
+                <input type="text" name="first_name" value="{{ user.first_name }}"
+                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold;">Last Name</label>
+                <input type="text" name="last_name" value="{{ user.last_name }}"
+                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold;">Email</label>
+                <input type="email" name="email" value="{{ user.email }}" required
+                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold;">Phone</label>
+                <input type="text" name="phone" value="{{ user.phone }}"
+                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <button type="submit" 
+                    style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                Update Profile
+            </button>
+        </form>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+
+        <!-- Password Change Form -->
+        <form method="POST">
+            {% csrf_token %}
+            <h4 style="text-align: center;">Change Password</h4>
+            <input type="hidden" name="update_password" value="1">
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold;">Current Password</label>
+                <input type="password" name="current_password" required
+                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold;">New Password</label>
+                <input type="password" name="new_password" required
+                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold;">Confirm New Password</label>
+                <input type="password" name="confirm_password" required
+                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            </div>
+
+            <button type="submit" 
+                    style="width: 100%; padding: 10px; background-color: #dc3545; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+                Change Password
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>
+{% endblock %}
